@@ -1,4 +1,3 @@
-import javax.xml.soap.SOAPPart;
 import java.io.IOException;
 import java.net.*;
 import java.io.*;
@@ -10,7 +9,7 @@ public class Server{
     private final static int TEST_USERS=2;      //number of Test-Users already existing at the beginning of the server.
     private final static int TEST_EMAILS=3;     //number of Test-User Emails already existing at the beginning of the server.
 
-    private static ArrayList<ClientHandler> clients = new ArrayList<>();
+    //private static ArrayList<ClientHandler> clients = new ArrayList<>();
 
     private static List<Account> accountList = new ArrayList<>();      /**List or ArrayList?**/
 
@@ -29,13 +28,16 @@ public class Server{
             System.out.println("[SERVER] Waiting for client connection..");
             Socket client = listenSocket.accept();
             System.out.println("[SERVER] Connected to client!");
-            ClientHandler Thread = new ClientHandler(client);
-            clients.add(Thread);
+            Thread Thread = new ClientHandler(client);
+            Thread.start();
+            //clients.add(Thread);
         }
-
 
     }
 
+    public static String MailServerMsg = "\n----------\nMailServer:\n----------\n";
+    public static String LoggedInOptions = "\n==========\n> NewEmail\n> ShowEmails\n> ReadEmail\n> DeleteEmail\n> LogOut\n> Exit\n==========\n";
+    public static String LoggedOutOptions = "\n==========\n> LogIn\n> Register\n> Exit\n==========\n";
 
     private static void registerInit(String username, String password){        //Method used only to create the initial Test-User Emails.
         Account acc = new Account(username,password);
@@ -46,26 +48,35 @@ public class Server{
     }
 
 
-    void register(String username,String password){
+    public static boolean searchUsername(String username){
         boolean found=false;
         for (Account acc : accountList){
             if (acc.getUsername().equals(username)){
                 found=true;
+                break;
             }
         }
-        if(!found){
+        return found;
+    }
+
+    public static void register(String username,String password){
             Account acc = new Account(username,password);
             accountList.add(acc);
         }
-        else{
-            /**What happens if the username is already being used?**/
+
+
+    public static boolean login(String username,String password){
+        boolean found=false;
+        for (Account acc : accountList){
+            if (acc.getUsername().equals(username) && acc.getPassword().equals(password)){
+                found=true;
+                break;
+            }
         }
+        return found;
     }
 
 
-    void login(){
-
-    }
 
 
     void newEmail(){
