@@ -103,8 +103,16 @@ public class Server{
 
     }
 
+    public static String noSuchCommand(boolean logged){
+        if(logged) {
+            return (MailServerMsg + "Sorry, no such command exists." + LoggedInOptions);
+        }else{
+            return (MailServerMsg + "Sorry, no such command exists." + LoggedOutOptions);
+        }
+    }
 
-    void exit(){
 
+    public static String exit(){
+        return (MailServerMsg + "The connection has successfully terminated. Thanks for using our Email Services!");
     }
 }

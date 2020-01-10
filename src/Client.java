@@ -28,6 +28,13 @@ public class Client {
             toServer.writeUTF(command);
             String serverResponse = fromServer.readUTF();
             System.out.println(serverResponse);
+            if(command.equals("Exit")){
+                toServer.close();
+                fromServer.close();
+                keyboard.close();
+                Server.close();
+                return;
+            }
         }
     }
 }

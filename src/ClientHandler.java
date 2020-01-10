@@ -69,6 +69,16 @@ public class ClientHandler extends Thread {
                         toClient.writeUTF(Server.MailServerMsg + "You are already LoggedIn to an account." + Server.LoggedInOptions);
                     }
                 }
+                else if(request.equals("Exit")){
+                    toClient.writeUTF(Server.exit());
+                    return;
+                }
+                else if(request.equals("showEmails")){
+
+                }
+                else{
+                    toClient.writeUTF(Server.noSuchCommand(LoggedIn));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,6 +86,7 @@ public class ClientHandler extends Thread {
             try {
                 toClient.close();
                 fromClient.close();
+                client.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
