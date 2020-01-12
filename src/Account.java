@@ -20,6 +20,8 @@ public class Account {
         return username;
     }
 
+    public List<Email> getMailbox() { return mailbox; }
+
     public void setPassword(String password) {
         this.password = password;
     }

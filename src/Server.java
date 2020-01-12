@@ -59,6 +59,17 @@ public class Server{
         return found;
     }
 
+    public static Account returnUser(String username){
+        boolean found=false;
+        for (Account acc : accountList){
+            if (acc.getUsername().equals(username)){
+                found=true;
+                return acc;
+            }
+        }
+        return null;
+    }
+
     public static void register(String username,String password){
             Account acc = new Account(username,password);
             accountList.add(acc);
@@ -77,15 +88,18 @@ public class Server{
     }
 
 
-
-
-    void newEmail(){
-
+    public static void newEmail(Account receiver,String senderUsername, String receiverUsername, String subject, String mainBody){
+        receiver.addEmail(true, senderUsername,receiverUsername,subject,mainBody);
     }
 
 
-    void showEmails(){
-
+    public static String showEmails(Account user){
+        String msg = "";
+        int count=0;
+        for (Email mail: user.getMailbox()){
+            //TO BE CONTINUED
+        }
+        return msg;
     }
 
 

@@ -13,6 +13,8 @@ public class ClientHandler extends Thread {
     private DataInputStream fromClient;
     private DataOutputStream toClient;
     private boolean LoggedIn = false;
+    private String username;
+    private Account userAcc;
 
 
     public ClientHandler(Socket client) throws IOException {
@@ -32,7 +34,7 @@ public class ClientHandler extends Thread {
                 if (request.equals("LogIn")) {              // LOGIN REQUEST
                     if(!LoggedIn) {
                         toClient.writeUTF(Server.MailServerMsg + "Type your username:");
-                        String username = fromClient.readUTF();
+                        username = fromClient.readUTF();
                         boolean found = Server.searchUsername(username);
                         if (!found) {
                             toClient.writeUTF(Server.MailServerMsg + "Username doesn't exist." + Server.LoggedOutOptions);
@@ -44,6 +46,7 @@ public class ClientHandler extends Thread {
                                 toClient.writeUTF(Server.MailServerMsg + "Wrong password." + Server.LoggedOutOptions);
                             }else{
                                 toClient.writeUTF(Server.MailServerMsg + "Welcome back " + username + "!" + Server.LoggedInOptions);
+                                userAcc = Server.returnUser(username);
                                 LoggedIn=true;
                             }
                         }
@@ -54,7 +57,7 @@ public class ClientHandler extends Thread {
                 else if (request.equals("Register")) {       // REGISTER REQUEST
                     if(!LoggedIn) {
                         toClient.writeUTF(Server.MailServerMsg + "Type your username:");
-                        String username = fromClient.readUTF();
+                        username = fromClient.readUTF();
                         boolean found = Server.searchUsername(username);
                         if (found) {
                             toClient.writeUTF(Server.MailServerMsg + "Username already exists." + Server.LoggedOutOptions);
@@ -73,8 +76,37 @@ public class ClientHandler extends Thread {
                     toClient.writeUTF(Server.exit());
                     return;
                 }
-                else if(request.equals("showEmails")){
+                else if(request.equals("newEmail")){
+                    if(LoggedIn){
+                        toClient.writeUTF(Server.MailServerMsg + "Receiver:\n");
+                        String receiver = fromClient.readUTF();
+                        Account recAcc = Server.returnUser(receiver);
+                        if(recAcc == null){
+                            toClient.writeUTF(Server.MailServerMsg + "No such user exists." + Server.LoggedInOptions);
+                        }else{
+                            toClient.writeUTF(Server.MailServerMsg + "Subject:\n");
+                            String subject = fromClient.readUTF();
 
+                            while(subject.equals("")){
+                                toClient.writeUTF(Server.MailServerMsg + "Subject can't be empty");
+                                subject = fromClient.readUTF();
+                            }
+
+                            toClient.writeUTF(Server.MailServerMsg + "Main Body:\n");
+                            String mainBody = fromClient.readUTF();
+
+                            while(mainBody.equals("")){
+                                toClient.writeUTF(Server.MailServerMsg + "Subject can't be empty");
+                                mainBody = fromClient.readUTF();
+                            }
+
+                            Server.newEmail(recAcc,username,receiver,subject,mainBody);
+                            toClient.writeUTF(Server.MailServerMsg + "Mail sent successfully!" + Server.LoggedInOptions);
+
+                        }
+                    }else{
+                        toClient.writeUTF(Server.MailServerMsg + "You are currently not LoggedIn to an account." + Server.LoggedOutOptions);
+                    }
                 }
                 else{
                     toClient.writeUTF(Server.noSuchCommand(LoggedIn));
