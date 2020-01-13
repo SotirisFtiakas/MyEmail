@@ -94,17 +94,52 @@ public class Server{
 
 
     public static String showEmails(Account user){
-        String msg = "";
+        String msg = MailServerMsg + "Id       From                 Subject\n";
         int count=0;
+        int temp;
+
         for (Email mail: user.getMailbox()){
-            //TO BE CONTINUED
+            count++;
+            msg += count + ".";
+            if (mail.getIsNew()){
+                msg += " [New] ";
+            }else{
+                msg += "       ";
+            }
+            msg += mail.getSender();
+            temp = 20-mail.getSender().length();
+            for(int i=-1;i<temp;i++){
+                msg += " ";
+            }
+            msg += mail.getSubject();
+            msg += "\n";
         }
+        msg += LoggedInOptions;
         return msg;
     }
 
 
-    void readEmail(){
-
+    public static String readEmail(Account user, int id){
+        String msg = MailServerMsg + "From                 Subject\n";
+        int count=1;
+        int temp;
+        for (Email mail: user.getMailbox()){
+            if(count==id){
+                msg += mail.getSender();
+                temp = 20-mail.getSender().length();
+                for(int i=-1;i<temp;i++){
+                    msg += " ";
+                }
+                msg += mail.getSubject();
+                msg += "\n\nMain Body:\n";
+                msg += mail.getMainBody();
+                msg += LoggedInOptions;
+                mail.setIsNew(false);
+                return msg;
+            }
+            count++;
+        }
+        return msg;
     }
 
 
@@ -113,8 +148,9 @@ public class Server{
     }
 
 
-    void logOut(){
+    public static String logOut(){
 
+        return (MailServerMsg + "You have been successfully LoggedOut" + LoggedOutOptions);
     }
 
     public static String noSuchCommand(boolean logged){
