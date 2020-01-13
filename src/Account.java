@@ -5,7 +5,7 @@ public class Account {
 
     private String username;
     private String password;
-    private List<Email> mailbox = new ArrayList<>(); /**List or ArrayList**/
+    private List<Email> mailbox = new ArrayList<>();
 
     Account(String username,String password){
         this.setUsername(username);

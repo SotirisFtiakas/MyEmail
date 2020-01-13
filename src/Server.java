@@ -114,6 +114,9 @@ public class Server{
             msg += mail.getSubject();
             msg += "\n";
         }
+        if(msg.equals(MailServerMsg + "Id       From                 Subject\n")){
+            msg += "\n          NO MESSAGES FOUND          ";
+        }
         msg += LoggedInOptions;
         return msg;
     }
@@ -143,8 +146,15 @@ public class Server{
     }
 
 
-    void deleteEmail(){
-
+    public static void deleteEmail(Account user, int id){
+        int count = 1;
+        for (Email mail: user.getMailbox()) {
+            if(count==id){
+                user.getMailbox().remove(mail);
+                return;
+            }
+            count++;
+        }
     }
 
 

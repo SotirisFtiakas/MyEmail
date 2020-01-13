@@ -68,8 +68,9 @@ public class ClientHandler extends Thread {
                             toClient.writeUTF(Server.MailServerMsg + "Type your password:");
                             String password = fromClient.readUTF();
                             Server.register(username, password);
-                            toClient.writeUTF(Server.MailServerMsg + "You have successfully registered!" + Server.LoggedInOptions);     //Need more
                             LoggedIn = true;
+                            userAcc = Server.returnUser(username);
+                            toClient.writeUTF(Server.MailServerMsg + "You have successfully registered!" + Server.LoggedInOptions);
                         }
                     } else {
                         toClient.writeUTF(Server.MailServerMsg + "You are already LoggedIn to an account." + Server.LoggedInOptions);
@@ -106,7 +107,7 @@ public class ClientHandler extends Thread {
                             }
 
                             Server.newEmail(recAcc, username, receiver, subject, mainBody);
-                            toClient.writeUTF(Server.MailServerMsg + "Mail sent successfully!" + Server.LoggedInOptions);
+                            toClient.writeUTF(Server.MailServerMsg + "Email sent successfully!" + Server.LoggedInOptions);
 
                         }
                     } else {
@@ -123,17 +124,25 @@ public class ClientHandler extends Thread {
                         toClient.writeUTF("Type the Id Number of the email: ");
                         String IDString = fromClient.readUTF();
                         int ID = Integer.parseInt(IDString);
-                        while (ID>userAcc.getMailbox().size()){
-                            toClient.writeUTF("No such Id. Type again: ");
-                            ID = fromClient.read();
+                        if (ID>userAcc.getMailbox().size() || ID<=0){
+                            toClient.writeUTF(Server.MailServerMsg + "No such Id." + Server.LoggedInOptions);
+                        }else{
+                            toClient.writeUTF(Server.readEmail(userAcc,ID));
                         }
-                        toClient.writeUTF(Server.readEmail(userAcc,ID));
                     }else{
                         toClient.writeUTF(Server.MailServerMsg + "You are currently not LoggedIn to an account." + Server.LoggedOutOptions);
                     }
                 } else if (request.equals("DeleteEmail")) {
                     if (LoggedIn) {
-                        toClient.writeUTF(Server.showEmails(userAcc));
+                        toClient.writeUTF("Type the Id Number of the email: ");
+                        String IDString = fromClient.readUTF();
+                        int ID = Integer.parseInt(IDString);
+                        if (ID>userAcc.getMailbox().size() || ID<=0){
+                            toClient.writeUTF(Server.MailServerMsg + "No such Id." + Server.LoggedInOptions);
+                        }else {
+                            Server.deleteEmail(userAcc, ID);
+                            toClient.writeUTF(Server.MailServerMsg + "Email deleted successfully!" + Server.LoggedInOptions);
+                        }
                     }else{
                         toClient.writeUTF(Server.MailServerMsg + "You are currently not LoggedIn to an account." + Server.LoggedOutOptions);
                     }
