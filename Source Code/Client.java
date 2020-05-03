@@ -4,14 +4,13 @@ import java.net.Socket;
 
 public class Client {
 
-    private static final String ServerIp = "127.0.0.1";
-
     public static void main(String[] args) throws IOException {
 
-        //int ServerPort=Integer.parseInt(args[0]);     //UNCOMMENT ON FINAL
+        int ServerPort=Integer.parseInt(args[1]);     //UNCOMMENT ON FINAL
 
-        int ServerPort=9090;
-        Socket Server = new Socket(ServerIp,ServerPort);
+        //int ServerPort=9090;                          //For testing purposes
+        String ServerIP = args[0];
+        Socket Server = new Socket(ServerIP,ServerPort);
 
         DataInputStream fromServer = new DataInputStream(Server.getInputStream());
         DataOutputStream toServer = new DataOutputStream(Server.getOutputStream());
@@ -19,7 +18,7 @@ public class Client {
 
 
         System.out.println("----------\nMailServer:\n----------\nHello, you connected as a guest.\n" +
-                "==========\n> LogIn\n> Register\n> Exit\n==========\n");
+                "==========\n> LogIn\n> Register\n> Exit\n==========\n"); 
 
 
         while(true){
